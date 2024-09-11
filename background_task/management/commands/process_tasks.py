@@ -52,6 +52,12 @@ class Command(BaseCommand):
             'dest': 'queue',
             'help': 'Only process tasks on this named queue',
         }),
+        (('--once', ), {
+            'action': 'store_true',
+            'dest': 'once',
+            'default': False,
+            'help': 'Run through all pending tasks once, then exit'
+        }),
         (('--log-std', ), {
             'action': 'store_true',
             'dest': 'log_std',
@@ -81,6 +87,7 @@ class Command(BaseCommand):
     def run(self, *args, **options):
         duration = options.get('duration', 0)
         sleep = options.get('sleep', 5.0)
+        once = options.get('once', False)
         queue = options.get('queue', None)
         log_std = options.get('log_std', False)
         is_dev = options.get('dev', False)
@@ -105,6 +112,8 @@ class Command(BaseCommand):
             if not self._tasks.run_next_task(queue):
                 # there were no tasks in the queue, let's recover.
                 close_connection()
+                if once:
+                    break
                 logger.debug('waiting for tasks')
                 time.sleep(sleep)
             else:
