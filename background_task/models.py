@@ -199,7 +199,7 @@ class Task(models.Model):
                 # won't kill the process. kill is a bad named system call
                 os.kill(int(self.locked_by), 0)
                 return True
-            except:
+            except Exception:
                 return False
         else:
             return None
@@ -427,7 +427,7 @@ class CompletedTask(models.Model):
                 # won't kill the process. kill is a bad named system call
                 os.kill(int(self.locked_by), 0)
                 return True
-            except:
+            except Exception:
                 return False
         else:
             return None
